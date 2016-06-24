@@ -39,15 +39,11 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
 
     protected function data($collection)
     {
-        $data = '';
+        $data = [];
         foreach ($collection as $item) {
-            if ($data !== '') {
-                $data .= PHP_EOL;
-            }
-
-            $data .= 'inventory,sku=' . $item->getSku() . ' qty=' . $item->getQty();
+            $data[] = 'inventory,sku=' . $item->getSku() . ' qty=' . $item->getQty();
         }
 
-        return $data;
+        return implode(PHP_EOL, $data);
     }
 }
