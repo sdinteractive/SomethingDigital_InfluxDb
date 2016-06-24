@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SomethingDigital_InfluxDb>
+            <active>true</active>
+            <codePool>community</codePool>
+        </SomethingDigital_InfluxDb>
+    </modules>
+</config>
