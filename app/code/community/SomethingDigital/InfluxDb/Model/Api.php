@@ -31,7 +31,6 @@ class SomethingDigital_InfluxDb_Model_Api
         $username = $this->config('username');
         $password = $this->config('password');
         if ($username && $password) {
-            $password = Mage::helper('core')->decrypt($password);
             $this->client->setAuth($username, $password);
         }
     }

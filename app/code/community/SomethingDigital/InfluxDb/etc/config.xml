@@ -12,4 +12,11 @@
             </sd_influxdb>
         </models>
     </global>
+    <default>
+        <sd_influxdb>
+            <general>
+                <password backend_model="adminhtml/system_config_backend_encrypted" />
+            </general>
+        </sd_influxdb>
+    </default>
 </config>
