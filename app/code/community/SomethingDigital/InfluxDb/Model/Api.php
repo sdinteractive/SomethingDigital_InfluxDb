@@ -7,6 +7,7 @@ class SomethingDigital_InfluxDb_Model_Api
     public function __construct()
     {
         $this->client = new Varien_Http_Client();
+        $this->setupAuth();
     }
 
     public function write($data)
@@ -22,6 +23,16 @@ class SomethingDigital_InfluxDb_Model_Api
         } else {
             // @todo How do we actually want to handle this?
             return false;
+        }
+    }
+
+    protected function setupAuth()
+    {
+        $username = $this->config('username');
+        $password = $this->config('password');
+        if ($username && $password) {
+            $password = Mage::helper('core')->decrypt($password);
+            $this->client->setAuth($username, $password);
         }
     }
 
