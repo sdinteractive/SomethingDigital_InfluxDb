@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <SomethingDigital_InfluxDb>
+            <version>0.1.0</version>
+        </SomethingDigital_InfluxDb>
+    </modules>
+    <global>
+        <models>
+            <sd_influxdb>
+                <class>SomethingDigital_InfluxDb_Model</class>
+            </sd_influxdb>
+        </models>
+    </global>
+    <default>
+        <sd_influxdb>
+            <general>
+                <password backend_model="adminhtml/system_config_backend_encrypted" />
+            </general>
+        </sd_influxdb>
+    </default>
+</config>

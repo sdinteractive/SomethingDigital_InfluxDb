@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<config>
+    <sections>
+        <sd_influxdb translate="label">
+            <label>InfluxDB</label>
+            <tab>advanced</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>9999</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general>
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <uri translate="label comment">
+                            <label>Uri</label>
+                            <comment>Include protocol and port. E.g. http://localhost:8086</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </uri>
+                        <db translate="label">
+                            <label>Database</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </db>
+                        <username translate="label">
+                            <label>Username</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </username>
+                        <password translate="label">
+                            <label>Password</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </password>
+                    </fields>
+                </general>
+            </groups>
+        </sd_influxdb>
+    </sections>
+</config>
