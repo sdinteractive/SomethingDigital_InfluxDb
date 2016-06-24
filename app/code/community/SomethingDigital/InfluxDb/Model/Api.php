@@ -21,7 +21,7 @@ class SomethingDigital_InfluxDb_Model_Api
         if ($response->getStatus() === 204) {
             return true;
         } else {
-            // @todo How do we actually want to handle this?
+            Mage::logException(new Exception('InfluxDB write failed, status=' . $response->getStatus()));
             return false;
         }
     }
