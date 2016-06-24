@@ -21,8 +21,10 @@ class SomethingDigital_Shell_Influxdb extends Mage_Shell_Abstract
 
         foreach ($tasks->asArray() as $task) {
             $model = Mage::getModel($task);
-            if (!$model) {
-                Mage::logException(new Exception('Task ' . $task . ' does not exist'));
+            if (!$model instanceof SomethingDigital_InfluxDb_Model_MeasurementInterface) {
+                $message = $task . ' does not implement the required interface';
+                echo $message . PHP_EOL;
+                Mage::logException(new Exception($message));
                 continue;
             }
 
