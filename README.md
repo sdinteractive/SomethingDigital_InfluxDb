@@ -7,6 +7,7 @@ Base module for sending data for InfluxDB.
 - "InfluxDB" section under the "Advanced" tab for configuring connection
 - `SomethingDigital_InfluxDb_Model_Api` class for communicating with InfluxDB
 - `SomethingDigital_InfluxDb_Model_MeasurementInterface` interface for creating measurements
+- Measurements in `app/code/community/SomethingDigital/InfluxDb/Model/Measurement`
 - `SomethingDigital_Shell_Influxdb` script for executing measurement groups
 
 ### Usage
@@ -26,13 +27,13 @@ The Magento cron has a bad habit of getting stuck. **In fact, it's one of the mo
     <sd_influxdb>
         <groups>
             <one_minute>
-                <inventory>sd_influxdbinventory/measurement</inventory>
+                <inventory>sd_influxdb/measurement_inventory</inventory>
             </one_minute>
         </groups>
     </sd_influxdb>
 </config>
 ```
 
-The `send` method will be called on each model specified under the measurement group. In `send` you can get the data you need and send it to InfluxDB using `SomethingDigital_InfluxDb_Model_Api`.
+The `send` method will be called on each model specified under the measurement group. In `send` you can get the data you need and send it to InfluxDB using `SomethingDigital_InfluxDb_Model_Api`. See the measurements in `app/code/community/SomethingDigital/InfluxDb/Model/Measurement` for reference.
 
 You can add additional groups and add additional measurements to groups as needed.
