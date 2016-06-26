@@ -1,12 +1,29 @@
 <?php
 /**
- * Sends the time since last run for each job was successfully executed
+ * Sends data about execution of Magento cron
  *
  * measurement: cron
  * tag key(s): job_code,mode
  * tag values(s): time_since_last_run
  *
- * @todo average_run_time tag value
+ * Here's an example (TICKScript) of how to alert on this...
+ *
+ * ```
+ * batch
+ *  |query('SELECT min(time_since_last_run) FROM "mydb"."default"."cron"')
+ *    .groupBy('mode')
+ *    .period(5m)
+ *    .every(5m)
+ *  |alert()
+ *    .crit(lambda: "min" > 14400)
+ *    .stateChangesOnly()
+ *    .log('/tmp/cron_batch.log')
+ * ```
+ *
+ * This will get the minimum time_since_last_run (in seconds) every 5 minutes
+ * grouped by mode and alert if greater than 4 hours
+ *
+ * @todo Add average_run_time as a tag value
  */
 class SomethingDigital_InfluxDb_Model_Measurement_Cron
     extends SomethingDigital_InfluxDb_Model_Measurement_Abstract
@@ -44,13 +61,14 @@ class SomethingDigital_InfluxDb_Model_Measurement_Cron
     {
         if (is_null($this->modeMap)) {
             $this->modeMap = array();
+
+            // @see Mage_Cron_Model_Observer::__generateJobs()
             $jobs = array_merge(
                 Mage::getConfig()->getNode('crontab/jobs')->asArray(),
                 Mage::getConfig()->getNode('default/crontab/jobs')->asArray()
             );
 
             foreach ($jobs as $jobCode => $jobConfig) {
-                // @see Mage_Cron_Model_Observer::__generateJobs()
                 if ($jobConfig['schedule']['config_path']) {
                     $cronExpr = Mage::getStoreConfig($jobConfig['schedule']['config_path']);
                 } else if ($jobConfig['schedule']['cron_expr']) {
