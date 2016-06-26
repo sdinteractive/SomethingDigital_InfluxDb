@@ -38,7 +38,7 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
 
     protected function data($collection)
     {
-        $data = [];
+        $data = array();
         foreach ($collection as $item) {
             $data[] = 'inventory,sku=' . $item->getSku() . ' qty=' . $item->getQty();
         }

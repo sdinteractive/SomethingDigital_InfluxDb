@@ -43,7 +43,7 @@ class SomethingDigital_InfluxDb_Model_Measurement_Cron
             ->where('finished_at IS NOT NULL')
             ->group('job_code');
 
-        $data = [];
+        $data = array();
         foreach ($jobs as $job) {
             $data[] = $this->line($job);
         }
