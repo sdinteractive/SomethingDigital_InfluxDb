@@ -57,35 +57,41 @@ class SomethingDigital_InfluxDb_Model_Measurement_Cron
             ' time_since_last_run=' . $job['time_since_last_run'];
     }
 
-    protected function mode($job_code)
+    protected function mode($jobCode)
     {
         if (is_null($this->modeMap)) {
-            $this->modeMap = array();
-
-            // @see Mage_Cron_Model_Observer::__generateJobs()
-            $jobs = array_merge(
-                Mage::getConfig()->getNode('crontab/jobs')->asArray(),
-                Mage::getConfig()->getNode('default/crontab/jobs')->asArray()
-            );
-
-            foreach ($jobs as $jobCode => $jobConfig) {
-                if ($jobConfig['schedule']['config_path']) {
-                    $cronExpr = Mage::getStoreConfig($jobConfig['schedule']['config_path']);
-                } else if ($jobConfig['schedule']['cron_expr']) {
-                    $cronExpr = $jobConfig['schedule']['cron_expr'];
-                }
-
-                if ($cronExpr == 'always') {
-                    $mode = 'always';
-                } else if ($cronExpr) {
-                    $mode = 'default';
-                } else {
-                    $mode = 'unknown';
-                }
-                $this->modeMap[$jobCode] = $mode;
-            }
+            $this->generateModeMap();
         }
 
-        return $this->modeMap[$job_code];
+        return $this->modeMap[$jobCode];
+    }
+
+    protected function generateModeMap()
+    {
+        $this->modeMap = array();
+
+        // @see Mage_Cron_Model_Observer::__generateJobs()
+        $jobs = array_merge(
+            Mage::getConfig()->getNode('crontab/jobs')->asArray(),
+            Mage::getConfig()->getNode('default/crontab/jobs')->asArray()
+        );
+
+        foreach ($jobs as $jobCode => $jobConfig) {
+            if ($jobConfig['schedule']['config_path']) {
+                $cronExpr = Mage::getStoreConfig($jobConfig['schedule']['config_path']);
+            } else if ($jobConfig['schedule']['cron_expr']) {
+                $cronExpr = $jobConfig['schedule']['cron_expr'];
+            }
+
+            if ($cronExpr == 'always') {
+                $mode = 'always';
+            } else if ($cronExpr) {
+                $mode = 'default';
+            } else {
+                $mode = 'unknown';
+            }
+
+            $this->modeMap[$jobCode] = $mode;
+        }
     }
 }
