@@ -3,10 +3,11 @@
  * Sends a snapshot of current inventory levels for all stock items
  *
  * measurement: inventory
- * tag key(s): sku
- * tag values(s): qty
+ * tag(s): sku
+ * field(s): qty
  */
 class SomethingDigital_InfluxDb_Model_Measurement_Inventory
+    extends SomethingDigital_InfluxDb_Model_Measurement_Abstract
     implements SomethingDigital_InfluxDb_Model_MeasurementInterface
 {
     const CHUNK_SIZE = 1000;
@@ -15,8 +16,6 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
     {
         $collection = Mage::getModel('cataloginventory/stock_item')
             ->getCollection();
-
-        $api = Mage::getModel('sd_influxdb/api');
 
         $collection->getSelect()->join(
             array('cpe' => 'catalog_product_entity'),
@@ -31,7 +30,7 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
         do {
             $data = $collection->setCurPage($currentPage);
             $collection->load();
-            $api->write($this->data($collection));
+            $this->api->write($this->data($collection));
             $collection->clear();
             $currentPage++;
         } while ($currentPage <= $lastPage);
@@ -39,7 +38,7 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
 
     protected function data($collection)
     {
-        $data = [];
+        $data = array();
         foreach ($collection as $item) {
             $data[] = 'inventory,sku=' . $item->getSku() . ' qty=' . $item->getQty();
         }
