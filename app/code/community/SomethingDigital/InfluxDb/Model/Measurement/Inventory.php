@@ -3,8 +3,8 @@
  * Sends a snapshot of current inventory levels for all stock items
  *
  * measurement: inventory
- * tag key(s): sku
- * tag values(s): qty
+ * tag(s): sku
+ * field(s): qty
  */
 class SomethingDigital_InfluxDb_Model_Measurement_Inventory
     extends SomethingDigital_InfluxDb_Model_Measurement_Abstract
