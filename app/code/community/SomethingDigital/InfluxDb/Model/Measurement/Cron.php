@@ -70,7 +70,7 @@ class SomethingDigital_InfluxDb_Model_Measurement_Cron
     {
         $this->modeMap = array();
 
-        // @see Mage_Cron_Model_Observer::__generateJobs()
+        // @see Mage_Cron_Model_Observer::_generateJobs()
         $jobs = array_merge(
             Mage::getConfig()->getNode('crontab/jobs')->asArray(),
             Mage::getConfig()->getNode('default/crontab/jobs')->asArray()
