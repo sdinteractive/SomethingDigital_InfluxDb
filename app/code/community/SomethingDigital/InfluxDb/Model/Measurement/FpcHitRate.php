@@ -63,16 +63,24 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
     {
         $measurement = 'request_response';
         $tags = explode('&', $key);
-        foreach ($tags as &$tag) {
-            $tag = urldecode($tag);
+        foreach ($tags as $key => &$tag) {
+            // If the tag is empty (can happen with e.g. customer group) skip it.
+            // Empty tags are no bueno with InfluxDB.
+            if (substr($tag, -1) === '=') {
+                unset($tags[$key]);
+                continue;
+            }
+
             if (stripos($tag, 'container=') !== false) {
                 $measurement = 'container_miss';
             }
-            // If the tag is empty (can happen with e.g. customer group) add the
-            // word "none". Empty tags are no bueno with InfluxDB.
-            if (preg_match('/\=$/', $tag)) {
-                $tag = $tag . 'none';
-            }
+
+            // Make it human read able and replace any characters that need to be
+            // escaped with an underscore...
+            // See https://docs.influxdata.com/influxdb/v0.13/write_protocols/write_syntax/#escaping-characters
+            $array = explode('=', $tag);
+            $array[1] = str_replace(array(' ', ',', '='), '_', urldecode($array[1]));
+            $tag = implode('=', $array);
         }
 
         $tags = implode(',', $tags);
