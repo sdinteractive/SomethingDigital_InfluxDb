@@ -41,11 +41,9 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
             $connection->hGetAll(Mpchadwick_PageCacheHitRate_Model_Tracker_Redis::KEY_PREFIX . 'ContainerMiss')
         );
         $data = array();
-        $i = 0;
         foreach ($raw as $key => $val) {
             $data[] = $this->line($key, $val);
-            $i++;
-            if ($i >= self::MAX_LINES_PER_SEND) {
+            if (count($data) >= self::MAX_LINES_PER_SEND) {
                 $this->api->write(implode(PHP_EOL, $data));
                 $data = array();
             }
