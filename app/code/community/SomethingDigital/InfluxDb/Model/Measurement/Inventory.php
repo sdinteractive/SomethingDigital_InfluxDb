@@ -4,13 +4,26 @@
  *
  * measurement: inventory
  * tag(s): sku
- * field(s): qty
+ * field(s): qty,is_in_stock,backorders,status
+ *
+ * @todo  Multistore support? - cpei can have multiple values for status that vary by store view
  */
 class SomethingDigital_InfluxDb_Model_Measurement_Inventory
     extends SomethingDigital_InfluxDb_Model_Measurement_Abstract
     implements SomethingDigital_InfluxDb_Model_MeasurementInterface
 {
     const CHUNK_SIZE = 1000;
+
+    /** @var int */
+    protected $statusAttributeId;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->statusAttributeId = Mage::getSingleton('eav/config')
+            ->getAttribute('catalog_product', 'status')
+            ->getAttributeId();
+    }
 
     public function send()
     {
@@ -21,7 +34,16 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
             array('cpe' => 'catalog_product_entity'),
             'cpe.entity_id = main_table.product_id',
             array('sku' => 'cpe.sku')
-        );
+        )->join(
+            array('cpei' => 'catalog_product_entity_int'),
+            'cpe.entity_id = cpei.entity_id',
+            array(
+                'status' => 'cpei.value',
+                'attribute_id' => 'cpei.attribute_id',
+                'store_id' => 'cpei.store_id'
+            )
+        )->where('attribute_id = ?', $this->statusAttributeId
+        )->where('store_id = ?', 0);
 
         $collection->setPageSize(self::CHUNK_SIZE);
         $currentPage = 1;
@@ -40,7 +62,11 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
     {
         $data = array();
         foreach ($collection as $item) {
-            $data[] = 'inventory,sku=' . $item->getSku() . ' qty=' . $item->getQty();
+            $data[] = 'inventory,sku=' . $item->getSku() .
+                ' qty=' . $item->getQty() .
+                ',is_in_stock=' . $item->getIsInStock() .
+                ',backorders=' . $item->getBackorders() .
+                ',status=' . $item->getStatus();
         }
 
         return implode(PHP_EOL, $data);
