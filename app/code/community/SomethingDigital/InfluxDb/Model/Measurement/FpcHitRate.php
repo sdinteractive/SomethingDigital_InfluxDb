@@ -34,12 +34,18 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
 
     public function send()
     {
+        $prefix = Mpchadwick_PageCacheHitRate_Model_Tracker_Redis::KEY_PREFIX;
         $tracker = Mage::getModel('mpchadwick_pagecachehitrate/tracker_redis');
         $connection = $tracker->connection($this->alias());
+
+        $connection->rename($prefix . 'RequestResponse', $prefix . 'RequestResponse:InProgress');
+        $connection->rename($prefix . 'ContainerMiss', $prefix . 'ContainerMiss:InProgress');
+
         $raw = array_merge(
-            $connection->hGetAll(Mpchadwick_PageCacheHitRate_Model_Tracker_Redis::KEY_PREFIX . 'RequestResponse'),
-            $connection->hGetAll(Mpchadwick_PageCacheHitRate_Model_Tracker_Redis::KEY_PREFIX . 'ContainerMiss')
+            $connection->hGetAll($prefix . 'RequestResponse:InProgress'),
+            $connection->hGetAll($prefix . 'ContainerMiss:InProgress')
         );
+
         $data = array();
         foreach ($raw as $key => $val) {
             $data[] = $this->line($key, $val);
@@ -52,6 +58,9 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
         if ($data) {
             $this->api->write(implode(PHP_EOL, $data));
         }
+
+        $connection->del($prefix . 'RequestResponse:InProgress');
+        $connection->del($prefix . 'ContainerMiss:InProgress');
     }
 
     protected function alias()
