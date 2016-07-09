@@ -32,7 +32,17 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
 {
     const MAX_LINES_PER_SEND = 1000;
 
-    const IN_PROGRESS_FLAG = ':InProgress';
+    const IN_PROGRESS_FLAG_PREFIX = ':InProgress';
+
+    protected $inProgressFlag;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->inProgressFlag = self::IN_PROGRESS_FLAG_PREFIX . time();
+    }
+
 
     public function send()
     {
@@ -45,12 +55,8 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
 
         foreach ($types as $i => $type) {
             try {
-                if ($connection->keys($prefix . $type . self::IN_PROGRESS_FLAG)) {
-                    // Another job is currently transmitting the data
-                    continue;
-                }
-                $connection->rename($prefix . $type, $prefix . $type . self::IN_PROGRESS_FLAG);
-                $raw = array_merge($raw, $connection->hGetAll($prefix . $type . self::IN_PROGRESS_FLAG));
+                $connection->rename($prefix . $type, $prefix . $type . $this->inProgressFlag);
+                $raw = array_merge($raw, $connection->hGetAll($prefix . $type . $this->inProgressFlag));
             } catch (Exception $e) {
                 // Credis_Client threw 'ERR no such key'. Don't process it any further
                 unset($types[$i]);
@@ -72,7 +78,7 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
 
         foreach ($types as $type) {
             try {
-                $connection->del($prefix . $type . self::IN_PROGRESS_FLAG);
+                $connection->del($prefix . $type . $this->inProgressFlag);
             } catch (Exception $e) {
                 // The key was already deleted. Maybe the cache was flushed while we were writing
                 // the data?
