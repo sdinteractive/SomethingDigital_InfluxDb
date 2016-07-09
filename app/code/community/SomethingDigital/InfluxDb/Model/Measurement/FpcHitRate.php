@@ -32,19 +32,36 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
 {
     const MAX_LINES_PER_SEND = 1000;
 
+    const IN_PROGRESS_FLAG_PREFIX = ':InProgress';
+
+    protected $inProgressFlag;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->inProgressFlag = self::IN_PROGRESS_FLAG_PREFIX . time();
+    }
+
+
     public function send()
     {
         $prefix = Mpchadwick_PageCacheHitRate_Model_Tracker_Redis::KEY_PREFIX;
         $tracker = Mage::getModel('mpchadwick_pagecachehitrate/tracker_redis');
         $connection = $tracker->connection($this->alias());
 
-        $connection->rename($prefix . 'RequestResponse', $prefix . 'RequestResponse:InProgress');
-        $connection->rename($prefix . 'ContainerMiss', $prefix . 'ContainerMiss:InProgress');
+        $raw = array();
+        $types = array('RequestResponse', 'ContainerMiss');
 
-        $raw = array_merge(
-            $connection->hGetAll($prefix . 'RequestResponse:InProgress'),
-            $connection->hGetAll($prefix . 'ContainerMiss:InProgress')
-        );
+        foreach ($types as $i => $type) {
+            try {
+                $connection->rename($prefix . $type, $prefix . $type . $this->inProgressFlag);
+                $raw = array_merge($raw, $connection->hGetAll($prefix . $type . $this->inProgressFlag));
+            } catch (Exception $e) {
+                // Credis_Client threw 'ERR no such key'. Don't process it any further
+                unset($types[$i]);
+            }
+        }
 
         $data = array();
         foreach ($raw as $key => $val) {
@@ -59,8 +76,14 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
             $this->api->write(implode(PHP_EOL, $data));
         }
 
-        $connection->del($prefix . 'RequestResponse:InProgress');
-        $connection->del($prefix . 'ContainerMiss:InProgress');
+        foreach ($types as $type) {
+            try {
+                $connection->del($prefix . $type . $this->inProgressFlag);
+            } catch (Exception $e) {
+                // The key was already deleted. Maybe the cache was flushed while we were writing
+                // the data?
+            }
+        }
     }
 
     protected function alias()
