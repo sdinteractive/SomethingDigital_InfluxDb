@@ -4,10 +4,11 @@ class SomethingDigital_InfluxDb_Model_Api
 {
     const XML_PREFIX = 'sd_influxdb/general/';
 
-    public function __construct()
+    public function __construct($args = array())
     {
         $this->client = new Varien_Http_Client();
         $this->setupAuth();
+        $this->precision = ($args['precision']) ? $args['precision'] : 's';
     }
 
     public function write($data)
@@ -37,7 +38,8 @@ class SomethingDigital_InfluxDb_Model_Api
 
     protected function uri($operation)
     {
-        return $this->config('uri') . '/' . $operation . '?db=' . $this->config('db');
+        return $this->config('uri') . '/' . $operation . '?db=' . $this->config('db') .
+            '&precision=' . $this->precision;
     }
 
     protected function config($path)
