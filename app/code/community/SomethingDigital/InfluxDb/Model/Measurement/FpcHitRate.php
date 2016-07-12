@@ -30,8 +30,6 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
     extends SomethingDigital_InfluxDb_Model_Measurement_Abstract
     implements SomethingDigital_InfluxDb_Model_MeasurementInterface
 {
-    const MAX_LINES_PER_SEND = 1000;
-
     const IN_PROGRESS_FLAG_PREFIX = ':InProgress';
 
     protected $inProgressFlag;
