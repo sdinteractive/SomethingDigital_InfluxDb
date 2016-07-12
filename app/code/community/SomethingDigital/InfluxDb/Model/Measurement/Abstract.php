@@ -2,6 +2,8 @@
 
 abstract class SomethingDigital_InfluxDb_Model_Measurement_Abstract
 {
+    const MAX_LINES_PER_SEND = 1000;
+
     /** @var SomethingDigital_InfluxDb_Model_Api */
     protected $api;
 
