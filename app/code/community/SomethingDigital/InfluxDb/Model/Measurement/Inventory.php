@@ -12,8 +12,6 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
     extends SomethingDigital_InfluxDb_Model_Measurement_Abstract
     implements SomethingDigital_InfluxDb_Model_MeasurementInterface
 {
-    const CHUNK_SIZE = 1000;
-
     /** @var int */
     protected $statusAttributeId;
 
@@ -45,7 +43,7 @@ class SomethingDigital_InfluxDb_Model_Measurement_Inventory
         )->where('attribute_id = ?', $this->statusAttributeId
         )->where('store_id = ?', 0);
 
-        $collection->setPageSize(self::CHUNK_SIZE);
+        $collection->setPageSize(self::MAX_LINES_PER_SEND);
         $currentPage = 1;
         $lastPage = $collection->getLastPageNumber();
 
