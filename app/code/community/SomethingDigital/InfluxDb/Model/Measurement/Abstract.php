@@ -10,5 +10,6 @@ abstract class SomethingDigital_InfluxDb_Model_Measurement_Abstract
     public function __construct()
     {
         $this->api = Mage::getModel('sd_influxdb/api');
+        $this->readCon = Mage::getSingleton('core/resource')->getConnection('core_read');
     }
 }
