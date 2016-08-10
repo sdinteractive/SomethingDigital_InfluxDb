@@ -1,0 +1,4 @@
+#SomethingDigital_InfluxDb
+app/code/community/SomethingDigital/InfluxDb
+app/etc/modules/SomethingDigital_InfluxDb.xml
+shell/sd_influxdb.php
