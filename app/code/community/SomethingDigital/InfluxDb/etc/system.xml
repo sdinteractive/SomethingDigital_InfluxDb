@@ -54,6 +54,25 @@
                         </password>
                     </fields>
                 </general>
+                <fpc_hit_rate>
+                    <label>FPC Hit Rate</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <in_progress_expires translate="label comment">
+                            <label>In Progress Expires</label>
+                            <comment>Amount of time after which In Progress data expires. This is to prevent the Redis store from filling up in case InfluxDb goes down.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </in_progress_expires>
+                    </fields>
+                </fpc_hit_rate>
             </groups>
         </sd_influxdb>
     </sections>

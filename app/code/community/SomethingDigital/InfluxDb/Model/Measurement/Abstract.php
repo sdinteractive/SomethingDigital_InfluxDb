@@ -7,9 +7,13 @@ abstract class SomethingDigital_InfluxDb_Model_Measurement_Abstract
     /** @var SomethingDigital_InfluxDb_Model_Api */
     protected $api;
 
+    /** @var SomethingDigital_InfluxDb_Model_Config */
+    protected $config;
+
     public function __construct()
     {
         $this->api = Mage::getModel('sd_influxdb/api');
         $this->readCon = Mage::getSingleton('core/resource')->getConnection('core_read');
+        $this->config = Mage::getModel('sd_influxdb/config');
     }
 }
