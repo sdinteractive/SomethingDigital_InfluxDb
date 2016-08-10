@@ -2,11 +2,10 @@
 
 class SomethingDigital_InfluxDb_Model_Api
 {
-    const XML_PREFIX = 'sd_influxdb/general/';
-
     public function __construct($args = array())
     {
         $this->client = new Varien_Http_Client();
+        $this->config = Mage::getModel('sd_influxdb/config');
         $this->setupAuth();
         $this->precision = ($args['precision']) ? $args['precision'] : 's';
     }
@@ -29,8 +28,8 @@ class SomethingDigital_InfluxDb_Model_Api
 
     protected function setupAuth()
     {
-        $username = $this->config('username');
-        $password = $this->config('password');
+        $username = $this->config->get('general/username');
+        $password = $this->config->get('general/password');
         if ($username && $password) {
             $this->client->setAuth($username, $password);
         }
@@ -38,12 +37,8 @@ class SomethingDigital_InfluxDb_Model_Api
 
     protected function uri($operation)
     {
-        return $this->config('uri') . '/' . $operation . '?db=' . $this->config('db') .
+        return $this->config->get('general/uri') . '/' . $operation .
+            '?db=' . $this->config->get('general/db') .
             '&precision=' . $this->precision;
-    }
-
-    protected function config($path)
-    {
-        return Mage::getStoreConfig(self::XML_PREFIX . $path);
     }
 }

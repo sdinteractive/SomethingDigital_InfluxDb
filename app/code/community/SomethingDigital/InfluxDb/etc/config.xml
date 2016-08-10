@@ -2,7 +2,7 @@
 <config>
     <modules>
         <SomethingDigital_InfluxDb>
-            <version>0.4.2</version>
+            <version>0.5.0</version>
         </SomethingDigital_InfluxDb>
     </modules>
     <global>
@@ -17,6 +17,9 @@
             <general>
                 <password backend_model="adminhtml/system_config_backend_encrypted" />
             </general>
+            <fpc_hit_rate>
+                <in_progress_expires>3600</in_progress_expires>
+            </fpc_hit_rate>
         </sd_influxdb>
     </default>
 </config>

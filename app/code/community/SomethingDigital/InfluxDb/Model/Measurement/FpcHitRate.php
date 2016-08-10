@@ -53,8 +53,11 @@ class SomethingDigital_InfluxDb_Model_Measurement_FpcHitRate
 
         foreach ($types as $i => $type) {
             try {
-                $connection->rename($prefix . $type, $prefix . $type . $this->inProgressFlag);
-                $raw = array_merge($raw, $connection->hGetAll($prefix . $type . $this->inProgressFlag));
+                $orig = $prefix . $type;
+                $new = $orig . $this->inProgressFlag;
+                $connection->rename($orig, $new);
+                $connection->expire($new, $this->config->get('fpc_hit_rate/in_progress_expires'));
+                $raw = array_merge($raw, $connection->hGetAll($new));
             } catch (Exception $e) {
                 // Credis_Client threw 'ERR no such key'. Don't process it any further
                 unset($types[$i]);
