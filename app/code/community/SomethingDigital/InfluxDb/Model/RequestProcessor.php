@@ -62,7 +62,6 @@ class SomethingDigital_InfluxDb_Model_RequestProcessor
 
         $source = new $class;
 
-
         return $source->getMetadata('routing_requested_route') . '/' .
             $source->getMetadata('routing_requested_controller') . '/' .
             $source->getMetadata('routing_requested_action');
