@@ -1,10 +1,23 @@
 <?php
-
-class SomethingDigital_InfluxDb_Model_RequestProcessor extends Enterprise_PageCache_Model_Processor
+/**
+ * Adds an Sd-Influxdb-Route response header
+ *
+ * E.g.
+ * Sd-Influxdb-Route: catalog/category/view
+ *
+ * The intention is to record this in the Apache log so that response codes
+ * can be analyzed on a per route basis.
+ *
+ * Configuration needs to happen in an xml file in app/etc in order to be
+ * compatible with FPC.
+ */
+class SomethingDigital_InfluxDb_Model_RequestProcessor
 {
     const XML_PATH_SHOULD_TRACK = 'sd_influxdb/route_response_headers/enabled';
 
     const XML_PATH_METADATA_SOURCE = 'sd_influxdb/route_response_headers/metadata_source';
+
+    const DEFAULT_METADATA_SOURCE = 'Enterprise_PageCache_Model_Processor';
 
     const RESPONSE_HEADER_PARAMETER = 'Sd-Influxdb-Route';
 
@@ -32,18 +45,23 @@ class SomethingDigital_InfluxDb_Model_RequestProcessor extends Enterprise_PageCa
             $value = $this->routeForMisses();
         }
 
+        if (!$value) {
+            return;
+        }
+
         Mage::app()->getResponse()->setHeader(self::RESPONSE_HEADER_PARAMETER, $value);
     }
 
     protected function routeForHits()
     {
-        $configured = (string)Mage::getConfig()->getNode(self::XML_PATH_METADATA_SOURCE);
+        $class = (string)Mage::getConfig()->getNode(self::XML_PATH_METADATA_SOURCE);
 
-        if (class_exists($configured)) {
-            $source = new $configured;
-        } else {
-            $source = $this;
+        if (!$class || !class_exists($class)) {
+            $class = self::DEFAULT_METADATA_SOURCE;
         }
+
+        $source = new $class;
+
 
         return $source->getMetadata('routing_requested_route') . '/' .
             $source->getMetadata('routing_requested_controller') . '/' .
