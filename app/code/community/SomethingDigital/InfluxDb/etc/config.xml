@@ -12,6 +12,18 @@
             </sd_influxdb>
         </models>
     </global>
+    <frontend>
+        <events>
+            <controller_front_send_response_before>
+                <observers>
+                    <sd_influxdb>
+                        <class>sd_influxdb/observer</class>
+                        <method>handleControllerFrontSendResponseBefore</method>
+                    </sd_influxdb>
+                </observers>
+            </controller_front_send_response_before>
+        </events>
+    </frontend>
     <default>
         <sd_influxdb>
             <general>
